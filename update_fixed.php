@@ -39,27 +39,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     // Validation
     if (!$id || $id < 1) {
-        header("Location: update.php?id=$id&error=invalid_id");
+        header("Location: update_fixed.php?id=$id&error=invalid_id");
         exit();
     }
     
     if (empty($nom) || empty($prenom)) {
-        header("Location: update.php?id=$id&error=empty_fields");
+        header("Location: update_fixed.php?id=$id&error=empty_fields");
         exit();
     }
     
     if (strlen($nom) < 2 || strlen($prenom) < 2) {
-        header("Location: update.php?id=$id&error=too_short");
+        header("Location: update_fixed.php?id=$id&error=too_short");
         exit();
     }
     
     if (!preg_match('/^[a-zA-ZÀ-ÿ\s-]+$/', $nom) || !preg_match('/^[a-zA-ZÀ-ÿ\s-]+$/', $prenom)) {
-        header("Location: update.php?id=$id&error=invalid_chars");
+        header("Location: update_fixed.php?id=$id&error=invalid_chars");
         exit();
     }
     
     if (!$filiere_id || $filiere_id < 1) {
-        header("Location: update.php?id=$id&error=invalid_filiere");
+        header("Location: update_fixed.php?id=$id&error=invalid_filiere");
         exit();
     }
     
@@ -72,13 +72,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: index.php?success=updated");
             exit();
         } else {
-            header("Location: update.php?id=$id&error=update_failed");
+            header("Location: update_fixed.php?id=$id&error=update_failed");
             exit();
         }
         
     } catch (PDOException $e) {
         error_log("Erreur base de données: " . $e->getMessage());
-        header("Location: update.php?id=$id&error=db_error");
+        header("Location: update_fixed.php?id=$id&error=db_error");
         exit();
     }
 }
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <h2>Modifier les informations de l'étudiant</h2>
         
         <?php
-        // Afficher les messages d'erreur pour la page update
+        // Afficher les messages d'erreur
         if (isset($_GET['error'])) {
             $message = '';
             switch($_GET['error']) {
@@ -112,9 +112,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 case 'invalid_filiere':
                     $message = 'Veuillez sélectionner une filière valide.';
                     break;
-                case 'filiere_not_found':
-                    $message = 'La filière sélectionnée n\'existe pas.';
-                    break;
                 case 'update_failed':
                     $message = 'Une erreur est survenue lors de la modification.';
                     break;
@@ -128,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         ?>
         
-        <form id="studentForm" action="update.php" method="POST" onsubmit="return validateForm()">
+        <form id="studentForm" action="update_fixed.php" method="POST" onsubmit="return validateForm()">
             <input type="hidden" name="id" value="<?= $etudiant['id'] ?>">
 
             <label for="nom">Nom :</label>
@@ -142,7 +139,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php
                 $stmt_f = $pdo->query("SELECT * FROM filieres");
                 while($f = $stmt_f->fetch()) {
-                    // Sélection automatique de la filière actuelle
                     $selected = ($f['id'] == $etudiant['filiere_id']) ? 'selected' : '';
                     echo "<option value='{$f['id']}' $selected>{$f['nom']}</option>";
                 }

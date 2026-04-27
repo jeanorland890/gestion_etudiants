@@ -95,7 +95,7 @@
                             <td><?= htmlspecialchars($row['f_nom']) ?></td>
                             <td>
                                 <div class="action-buttons">
-                                    <a href="update.php?id=<?= $row['id'] ?>" class="btn-edit">Modifier</a>
+                                    <a href="update_simple.php?id=<?= htmlspecialchars($row['id']) ?>" class="btn-edit">Modifier</a>
                                     <a href="delete.php?id=<?= $row['id'] ?>" class="btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet étudiant ?')">Supprimer</a>
                                 </div>
                             </td>
